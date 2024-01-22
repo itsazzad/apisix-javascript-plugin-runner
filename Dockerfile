@@ -37,7 +37,7 @@ RUN npm install && \
 FROM apache/apisix:${APISIX_IMAGE_TAG:-3.8.0-debian}
 
 # Use USTC mirror for apk
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 # Copy Node.js and npm binaries from the builder stage
 COPY --from=node:18.12.0-alpine /usr/local/include/node /usr/local/include/node
@@ -45,8 +45,12 @@ COPY --from=node:18.12.0-alpine /usr/local/lib/node_modules /usr/local/lib/node_
 COPY --from=node:18.12.0-alpine /usr/local/bin/node /usr/local/bin/node
 
 # Create symbolic links for npm and npx
-RUN ln -s ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
-    ln -s ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+RUN echo $(whoami);
+RUN echo $(pwd);
+RUN echo $(ls -l ../lib/node_modules/npm/bin/);
+RUN echo $(ls -l /usr/local/bin/);
+RUN ln -s ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm;
+RUN ln -s ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx;
 
 # Copy the built application from the builder stage
 COPY --from=builder /usr/local/apisix/javascript-plugin-runner /usr/local/apisix/javascript-plugin-runner
